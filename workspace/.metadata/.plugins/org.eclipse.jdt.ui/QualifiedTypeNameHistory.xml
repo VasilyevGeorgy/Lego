@@ -9,4 +9,5 @@
 <fullyQualifiedTypeName name="lejos.remote.ev3.RMISampleProvider"/>
 <fullyQualifiedTypeName name="lejos.remote.ev3.RemoteEV3"/>
 <fullyQualifiedTypeName name="java.rmi.RemoteException"/>
+<fullyQualifiedTypeName name="java.awt.Button"/>
 </qualifiedTypeNameHistroy>

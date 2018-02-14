@@ -5,9 +5,7 @@ import java.awt.event.*;
 
 
 public class DHTable {
-	
-	
-	
+		
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
@@ -71,11 +69,7 @@ public class DHTable {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
 		frame.pack();
-		frame.setVisible(true);
-		
-		
-		
-		
+		frame.setVisible(true);	
 	}
 
 }

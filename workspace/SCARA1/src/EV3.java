@@ -23,6 +23,7 @@ import lejos.hardware.sensor.SensorConstants;
 import lejos.hardware.sensor.SensorMode;
 
 
+
 public class EV3 {
 	
 	static RegulatedMotor a = new EV3LargeRegulatedMotor(MotorPort.C);
@@ -33,29 +34,42 @@ public class EV3 {
 	static double l2 = 25; // mm
 	
 	// yellow field
-	static double[] box = {0.01, 53.8, 107.61, 161.1}; //mm  расстояние между центрами коробков
+	static double[] boxY = {0.01, 53.8, 107.61, 161.1}; //mm  расстояние между центрами коробков
+	static double[] boxX = {0.0, 0.0, -10.0, -26.0};
 	static double jump = 89;//mm  расстояние от середины до середины междурядья
 	
 	
 	public static void invKin(){ // y = mm
 		
+		a.setSpeed(460); 
 		b.setSpeed(52);
 		c.setSpeed(1600); 
 		
 		double d2Prev = 0;
 		int th2Prev = 0;
 		
-		for (int i=0; i==3; i++){
+		double x = 0;
+		double y = 0;
+		
+		int th2 = 0;
+		int th3 = 0;
+		
+		int sumAngle = 0; 
+		
+		LCD.drawString("Running!", 0, 0);
+		Delay.msDelay(1000);
+		
+		for (int i=0; i<=3; i++){
 			
-			double x = 0;
-			double y = 0;
-			x = x + l1;
-			y = box[i] - l2;
+			//x = 0;
+			//y = 0;
+			x = boxX[i] + l1;
+			y = boxY[i] - l2;
 			double d2 = -l1 + Math.sqrt(x*x +y*y -l2*l2) - d2Prev ;
 			//System.out.println(d2);
 			// перевести d2  градусы для medmotor: 5000 deg = 42 mm
 			double angle = 5000*d2/42;
-			int th3 = (int) angle; // th3 - перевод d2 в градусы
+			th3 = (int) angle; // th3 - перевод d2 в градусы
 			d2Prev = d2Prev + d2;
 			
 			angle = 0.0;
@@ -63,19 +77,36 @@ public class EV3 {
 			//System.out.println(angle);
 			double alpha = Math.atan2(l2,l1+d2)*180/Math.PI;
 			//System.out.println(alpha);
-			int th2 = (int) (angle + alpha) - th2Prev;
+			th2 = (int) (angle + alpha) - th2Prev;
+			sumAngle += th2;
 			//System.out.println(th2);
 			th2Prev += th2;
 			 
 			 b.rotate(th2);
 			 b.stop();
 			 
-			 c.setSpeed(1600); 
 			 c.rotate(-th3);
 			 //System.out.println(th3);
 			 c.stop();
+			 	 
 		}
-
+		
+		 int angle = 70-th2;
+		 b.rotate(angle);
+		 b.stop();
+		 
+		 a.rotate(360);
+		 a.stop();
+		 
+		 c.rotate(5000);
+		 c.stop();
+		 
+		 b.rotate(-(angle+sumAngle));
+		 
+		 
+		 //Delay.msDelay(5000);
+		 
+		 
 		 
 		 //return new Pair<Integer>(th2, th3);
 		 //return new int[] {th2, th3};
@@ -109,26 +140,46 @@ public class EV3 {
 		
 	}
 		
-	private static EV3ColorSensor sensor;
+	public static EV3ColorSensor sensor;
 	public static void colorCheck(){
-		
 		sensor = new EV3ColorSensor(SensorPort.S1);
 	    sensor.setFloodlight(false);
-	    LCD.drawString("Init", 2, 2);
+	    LCD.drawString("Start to check colours", 2, 2);
 	    LCD.setAutoRefresh(false);
 	    SensorMode brightnessSensorMode = sensor.getRGBMode();
 	    float[] sample = new float[brightnessSensorMode.sampleSize()];
 	    
 	    int i = 0;
-
-	    while(i < 25) {
+        int q = 0;
+	    while(i < 100) {
 	    	++i;
 	        brightnessSensorMode.fetchSample(sample, 0);
 	        LCD.refresh();
 	        LCD.clear();
-	        System.out.println("R: " + sample[0] + " G: " + sample[1] + " B: " + sample[2] + "\n");
+	       // System.out.println("R: " + sample[0] + " G: " + sample[1] + " B: " + sample[2] + "\n");
+	        
+	        if((sample[0] >= 0.043) && (sample[0] <= 0.045))
+	        	{
+	        	q+=1;
+	        	if((sample[1] >= 0.043) && (sample[1] <= 0.044)){
+	        		q += 1;
+	        		
+	        		if((sample[2] >= 0.018) && (sample[2] <= 0.019))
+	        			q+=1;
+	        		
+	        		}
+	        	}
+	        
+	    
 	    }
-		
+	    if(q == 3)
+	        	{
+	        		LCD.drawString("black", 0, 0);
+	        		Delay.msDelay(5500);
+	        	}
+	        	else{
+	        		LCD.drawInt(q, 0, 0);
+        		Delay.msDelay(1500);}
 	}
 	
 	public static void playSound(){
@@ -225,13 +276,15 @@ public class EV3 {
 		
 	}
 	
-	 public static void main(String[] args) {	
-		 
-		 //forKin(0,0,-5000);
-		 
+	
+	 public static void main(String[] args) {
 		 
 		 
+		 //invKin();
+		 colorCheck();
 		 
+		 
+	
 		 /*int[] prevParam = invKin(0.0,box[1],0,0);
 		 Delay.msDelay(1000);
 		 

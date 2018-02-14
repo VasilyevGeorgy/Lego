@@ -1,0 +1,311 @@
+import lejos.hardware.BrickFinder;
+import lejos.hardware.lcd.GraphicsLCD;
+import lejos.hardware.lcd.LCD;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.MotorPort;
+import lejos.robotics.RegulatedMotor;
+import lejos.utility.Delay;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JFrame;
+
+import java.awt.Dimension;
+import java.io.File;
+
+import static java.lang.System.out;
+import lejos.hardware.Sound;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.SensorConstants;
+import lejos.hardware.sensor.SensorMode;
+
+
+
+public class EV3 {
+	
+	static RegulatedMotor a = new EV3LargeRegulatedMotor(MotorPort.C);
+	static RegulatedMotor b = new EV3LargeRegulatedMotor(MotorPort.B);
+	static RegulatedMotor c = new EV3MediumRegulatedMotor(MotorPort.A);
+	
+	static double l1 = 107; //mm
+	static double l2 = 25; // mm
+	
+	// yellow field
+	static double[] boxY = {0.01, 53.8, 107.61, 161.1}; //mm  расстояние между центрами коробков
+	static double[] boxX = {0.0, 0.0, -10.0, -26.0};
+	static double jump = 89;//mm  расстояние от середины до середины междурядья
+	
+	
+	public static void invKin(){ // y = mm
+		
+		a.setSpeed(460); 
+		b.setSpeed(52);
+		c.setSpeed(1600); 
+		
+		double d2Prev = 0;
+		int th2Prev = 0;
+		
+		double x = 0;
+		double y = 0;
+		
+		int th2 = 0;
+		int th3 = 0;
+		
+		int sumAngle = 0; 
+		
+		LCD.drawString("Running!", 0, 0);
+		Delay.msDelay(1000);
+		
+		for (int i=0; i<=3; i++){
+			
+			//x = 0;
+			//y = 0;
+			x = boxX[i] + l1;
+			y = boxY[i] - l2;
+			double d2 = -l1 + Math.sqrt(x*x +y*y -l2*l2) - d2Prev ;
+			//System.out.println(d2);
+			// перевести d2  градусы для medmotor: 5000 deg = 42 mm
+			double angle = 5000*d2/42;
+			th3 = (int) angle; // th3 - перевод d2 в градусы
+			d2Prev = d2Prev + d2;
+			
+			angle = 0.0;
+			angle = Math.atan2(y,x)*180/Math.PI;
+			//System.out.println(angle);
+			double alpha = Math.atan2(l2,l1+d2)*180/Math.PI;
+			//System.out.println(alpha);
+			th2 = (int) (angle + alpha) - th2Prev;
+			sumAngle += th2;
+			//System.out.println(th2);
+			th2Prev += th2;
+			 
+			 b.rotate(th2);
+			 b.stop();
+			 
+			 c.rotate(-th3);
+			 //System.out.println(th3);
+			 c.stop();
+			 	 
+		}
+		
+		 int angle = 70-th2;
+		 b.rotate(angle);
+		 b.stop();
+		 
+		 a.rotate(360);
+		 a.stop();
+		 
+		 c.rotate(5000);
+		 c.stop();
+		 
+		 b.rotate(-(angle+sumAngle));
+		 
+		 
+		 //Delay.msDelay(5000);
+		 
+		 
+		 
+		 //return new Pair<Integer>(th2, th3);
+		 //return new int[] {th2, th3};
+		 
+	}
+	
+	
+	public static void forKin(int m1, int m2, int m3){
+		
+		//RegulatedMotor a = new EV3LargeRegulatedMotor(MotorPort.A);
+		 //a.backward();
+		 a.setSpeed(460); 
+		 //a.rotateTo(90,true);
+		 a.rotate(m1);
+		 a.stop();
+		 
+		 //RegulatedMotor b = new EV3LargeRegulatedMotor(MotorPort.B);
+		 //m2 = -m2;
+		 //b.backward();
+		 b.setSpeed(52);
+		 //b.rotateTo(50);
+		 b.rotate(m2);
+		 b.stop();
+		 
+		 //RegulatedMotor c = new EV3MediumRegulatedMotor(MotorPort.C);
+		 m3 = -m3;
+		 //c.backward();
+		 c.setSpeed(1600); 
+		 c.rotate(m3);//110 deg = 25mm, max
+		 c.stop();
+		
+	}
+		
+	public static EV3ColorSensor sensor;
+	public static void colorCheck(){
+		sensor = new EV3ColorSensor(SensorPort.S1);
+	    sensor.setFloodlight(false);
+	    LCD.drawString("Start to check colours", 2, 2);
+	    LCD.setAutoRefresh(false);
+	    SensorMode brightnessSensorMode = sensor.getRGBMode();
+	    float[] sample = new float[brightnessSensorMode.sampleSize()];
+	    
+	    int i = 0;
+        int q = 0;
+	    while(i < 100) {
+	    	++i;
+	        brightnessSensorMode.fetchSample(sample, 0);
+	        LCD.refresh();
+	        LCD.clear();
+	       // System.out.println("R: " + sample[0] + " G: " + sample[1] + " B: " + sample[2] + "\n");
+	        
+	        if((sample[0] >= 0.043) && (sample[0] <= 0.045))
+	        	{
+	        	q+=1;
+	        	if((sample[1] >= 0.043) && (sample[1] <= 0.044)){
+	        		q += 1;
+	        		
+	        		if((sample[2] >= 0.018) && (sample[2] <= 0.019))
+	        			q+=1;
+	        		
+	        		}
+	        	}
+	        
+	        
+	    }
+	    if(q == 3)
+	        	{
+	        		LCD.drawString("black", 0, 0);
+	        		Delay.msDelay(5500);
+	        	}
+	        	else{
+	        		LCD.drawInt(q, 0, 0);
+        		Delay.msDelay(1500);}
+	}
+	
+	public static void playSound(){
+	     final File sound = new File("blacksabbath.wav");
+	     Sound.playSample(sound, 300);
+	     //System.out.println("still running...");
+	     Delay.msDelay(1000);
+	}
+	
+	
+	public static void e5(int len){
+		Sound.playNote(Sound.FLUTE, 659, len);
+	}
+	public static void b4(int len){
+		Sound.playNote(Sound.FLUTE, 494, len);
+	}
+	public static void c5(int len){
+		Sound.playNote(Sound.FLUTE, 523, len);
+	}
+	public static void d5(int len){
+		Sound.playNote(Sound.FLUTE, 587, len);
+	}
+	public static void a4(int len){
+		Sound.playNote(Sound.FLUTE, 440, len);
+	}
+	public static void f5(int len){
+		Sound.playNote(Sound.FLUTE, 698, len);
+	}
+	public static void a5(int len){
+		Sound.playNote(Sound.FLUTE, 880, len);
+	}
+	public static void g5(int len){
+		Sound.playNote(Sound.FLUTE, 784, len);
+	}
+	
+	public static void playMelody(){
+		
+		// Note's length
+		int hex = 90; // 1/16
+		int egh = 180; // 1/8
+		int qrt = 360; // 1/4
+		
+		e5(qrt);
+		b4(egh);
+		c5(egh);
+		d5(egh);
+		e5(hex);
+		d5(hex);
+		c5(egh);
+		b4(egh);
+
+		a4(qrt);
+		a4(egh);
+		c5(egh);
+		e5(qrt);
+		d5(egh);
+		c5(egh);
+
+		b4(qrt+egh);
+		c5(egh);
+		d5(qrt);
+		e5(qrt);
+		
+		c5(qrt);
+		a4(qrt);
+		a4(qrt+egh);
+		Delay.msDelay(hex);
+		
+		d5(qrt);
+		f5(egh);
+		a5(egh);
+		a5(hex);
+		a5(hex);
+		g5(egh);
+		f5(egh);
+		
+		e5(qrt+egh);
+		//Delay.msDelay(hex);
+		c5(egh);
+		e5(qrt);
+		d5(egh);
+		c5(egh);
+		
+		b4(qrt);
+		b4(egh);
+		c5(egh);
+		d5(qrt);
+		e5(qrt);
+		
+		c5(qrt);
+		a4(qrt);
+		a4(qrt+egh);
+		Delay.msDelay(egh);
+		
+	}
+	
+	
+	 public static void main(String[] args) {
+		 
+		 
+		 //invKin();
+		 colorCheck();
+		 
+		 
+	
+		 /*int[] prevParam = invKin(0.0,box[1],0,0);
+		 Delay.msDelay(1000);
+		 
+		 prevParam[0] = invKin(0.0,box[2],prevParam[0],prevParam[1])[0]; // ПЕРЕДЕЛАТЬ В НОРМАЛЬНЫЙ ЦИКЛ 
+		 Delay.msDelay(1000);											 // В САМОМ МЕТОДЕ
+		 
+		 prevParam = invKin(0.0,box[3],prevParam[0],prevParam[1]);
+		 Delay.msDelay(1000);*/
+		 
+		 //invKin(0.0,box[0]);
+	     
+		 //colorCheck();  
+		 
+		 //playSound();
+		 
+		 //playMelody();
+		 
+
+		 
+	}
+
+
+}
+

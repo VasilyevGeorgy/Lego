@@ -1,0 +1,70 @@
+import lejos.hardware.BrickFinder;
+import lejos.hardware.lcd.GraphicsLCD;
+import lejos.hardware.lcd.LCD;
+import lejos.hardware.motor.BaseRegulatedMotor;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.MotorPort;
+import lejos.remote.ev3.RMISampleProvider;
+import lejos.remote.ev3.RemoteEV3;
+import lejos.robotics.RegulatedMotor;
+import lejos.utility.Delay;
+
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JFrame;
+
+import java.awt.Dimension;
+import java.io.File;
+import java.rmi.RemoteException;
+
+import static java.lang.System.out;
+import lejos.hardware.Sound;
+import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.port.SensorPort;
+import lejos.hardware.sensor.SensorConstants;
+import lejos.hardware.sensor.SensorMode;
+
+import java.rmi.Remote;
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.*;
+
+
+public class MyColor {
+	
+	RMISampleProvider sampleProvider=  null;
+	
+	try {
+		RemoteEV3 ev3=new RemoteEV3("10.0.1.1");
+		sampleProvider = ev3.createSampleProvider("S1", "lejos.hardware.sensor.EV3ColorSensor", "RGB");
+		float[] samples = new float[3];
+		samples=sampleProvider.fetchSample();
+		System.out.println("RGB="+samples[0]+" / "+samples[1]+" / "+samples[2]);
+
+		while (System.in.available() == 0) {
+			samples=sampleProvider.fetchSample();
+
+			if ((samples[0]>0.255f) && (samples[0]<0.265f) && (samples[1]>0.260f) && (samples[1]<0.270f) && (samples[2]>0.195f) && (samples[2]<0.205f)) { 
+	                       System.out.println("White"); 
+	                } 
+
+	                if ((samples[0]>0.175f) && (samples[0]<0.190f) && (samples[1]>0.040f) && (samples[1]<0.055f) && (samples[2]>0.025f) && (samples[2]<0.045f)) {
+				System.out.println("Red");
+			}
+			Delay.msDelay(50);
+		}
+
+	} catch (Exception e) {
+		e.printStackTrace();
+	} finally {
+		try {
+			sampleProvider.close();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+}
+};
+
