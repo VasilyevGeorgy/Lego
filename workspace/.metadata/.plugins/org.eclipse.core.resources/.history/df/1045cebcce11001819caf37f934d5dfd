@@ -34,27 +34,27 @@ public class EV3 {
 	static double l2 = 25; // mm
 	
 	// yellow field
-	static double[] boxY = {0.01, 53.8, 107.61, 150.0}; //mm  расстояние между центрами коробков
-	static double[] boxX = {0.0, 0.0, -12.0, -20.0};
+	static double[] boxY = {0.01, 53.8, 107.61, 161.1}; //mm  расстояние между центрами коробков
+	static double[] boxX = {0.0, 0.0, -10.0, -26.0};
 	static double jump = 89;//mm  расстояние от середины до середины междурядья
-	static int jumpDeg = (int) 89*400/80;
 	
 	
 	public static void invKin(){ // y = mm
 		
-		a.setSpeed(100); 
+		a.setSpeed(460); 
 		b.setSpeed(52);
 		c.setSpeed(1600); 
 		
 		double d2Prev = 0;
 		int th2Prev = 0;
-		int th3Prev = 0;
 		
 		double x = 0;
 		double y = 0;
 		
 		int th2 = 0;
 		int th3 = 0;
+		
+		int sumAngle = 0; 
 		
 		LCD.drawString("Running!", 0, 0);
 		Delay.msDelay(1000);
@@ -65,19 +65,21 @@ public class EV3 {
 			//y = 0;
 			x = boxX[i] + l1;
 			y = boxY[i] - l2;
-			double d2 = -l1 + Math.sqrt(x*x +y*y -l2*l2) - d2Prev;
-			d2Prev = d2Prev + d2;
+			double d2 = -l1 + Math.sqrt(x*x +y*y -l2*l2) - d2Prev ;
 			//System.out.println(d2);
 			// перевести d2  градусы для medmotor: 5000 deg = 42 mm
-			th3 = (int) (5000*d2/42); // th3 - перевод d2 в градусы 
-			th3Prev += th3;
+			double angle = 5000*d2/42;
+			th3 = (int) angle; // th3 - перевод d2 в градусы
+			d2Prev = d2Prev + d2;
 			
-			double angle = 0.0;
+			angle = 0.0;
 			angle = Math.atan2(y,x)*180/Math.PI;
 			//System.out.println(angle);
 			double alpha = Math.atan2(l2,l1+d2)*180/Math.PI;
 			//System.out.println(alpha);
 			th2 = (int) (angle + alpha) - th2Prev;
+			sumAngle += th2;
+			//System.out.println(th2);
 			th2Prev += th2;
 			 
 			 b.rotate(th2);
@@ -89,17 +91,17 @@ public class EV3 {
 			 	 
 		}
 		
-		 int angle = 175 - th2Prev;
+		 int angle = 70-th2;
 		 b.rotate(angle);
 		 b.stop();
 		 
-		 a.rotate(jumpDeg); // 400 deg = 80mm
+		 a.rotate(360);
 		 a.stop();
 		 
-		 c.rotate(th3Prev); //5000
+		 c.rotate(5000);
 		 c.stop();
 		 
-		 b.rotate(-(angle+th2Prev));
+		 b.rotate(-(angle+sumAngle));
 		 
 		 
 		 //Delay.msDelay(5000);
@@ -277,9 +279,9 @@ public class EV3 {
 	
 	 public static void main(String[] args) {
 		 
-		 forKin(0,0,-4000);
+		 
 		 //invKin();
-		 //colorCheck();
+		 colorCheck();
 		 
 		 
 	

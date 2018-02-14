@@ -34,15 +34,14 @@ public class EV3 {
 	static double l2 = 25; // mm
 	
 	// yellow field
-	static double[] boxY = {0.01, 53.8, 107.61, 150.0}; //mm  расстояние между центрами коробков
-	static double[] boxX = {0.0, 0.0, -12.0, -20.0};
+	static double[] boxY = {0.01, 53.8, 107.61, 161.1}; //mm  расстояние между центрами коробков
+	static double[] boxX = {0.0, 0.0, -10.0, -26.0};
 	static double jump = 89;//mm  расстояние от середины до середины междурядья
-	static int jumpDeg = (int) 89*400/80;
 	
 	
 	public static void invKin(){ // y = mm
 		
-		a.setSpeed(100); 
+		a.setSpeed(460); 
 		b.setSpeed(52);
 		c.setSpeed(1600); 
 		
@@ -89,11 +88,11 @@ public class EV3 {
 			 	 
 		}
 		
-		 int angle = 175 - th2Prev;
+		 int angle = 90 - th2Prev;
 		 b.rotate(angle);
 		 b.stop();
 		 
-		 a.rotate(jumpDeg); // 400 deg = 80mm
+		 a.rotate(360);
 		 a.stop();
 		 
 		 c.rotate(th3Prev); //5000
@@ -277,9 +276,9 @@ public class EV3 {
 	
 	 public static void main(String[] args) {
 		 
-		 forKin(0,0,-4000);
+		 
 		 //invKin();
-		 //colorCheck();
+		 colorCheck();
 		 
 		 
 	
