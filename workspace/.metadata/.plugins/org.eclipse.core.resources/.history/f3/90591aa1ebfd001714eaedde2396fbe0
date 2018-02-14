@@ -1,0 +1,58 @@
+import lejos.hardware.BrickFinder;
+import lejos.hardware.lcd.GraphicsLCD;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.MotorPort;
+import lejos.robotics.RegulatedMotor;
+import lejos.utility.Delay;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JFrame;
+import java.awt.Dimension;
+
+
+public class SCARA1 {
+	
+	public static void operating( int t_1){
+		
+		RegulatedMotor a = new EV3LargeRegulatedMotor(MotorPort.A);
+		 //a.backward();
+		 a.setSpeed(320); 
+		 //a.rotateTo(90,true);
+		 a.rotate(t_1);
+		 a.stop();
+		 
+		 /*RegulatedMotor b = new EV3LargeRegulatedMotor(MotorPort.B);
+		 //b.backward();
+		 b.setSpeed(120);
+		 //b.rotateTo(50);
+		 b.rotate(-t_2);
+		 b.stop();
+		 
+		 RegulatedMotor c = new EV3MediumRegulatedMotor(MotorPort.C);
+		 c.backward();
+		 //c.setSpeed(360); 
+		 c.rotate(-d_3);//110 deg = 25mm, max
+		 c.stop();*/
+		
+	}
+	 public static void main(String[] args) {	
+		 
+		 operating(360);
+		 //operating(0,0,-120);
+		 //operating(0,0,-120);
+		 //operating(0,-45,0);
+		 //operating(-45,0,0);
+		 //double[][] dhtable = new double[5][5];
+		 //System.out.println(dhtable);
+	     //GraphicsLCD g  = BrickFinder.getDefault().getGraphicsLCD();     
+	     //g.drawString("", 0, 0, GraphicsLCD.VCENTER | GraphicsLCD.LEFT);
+	     //Delay.msDelay(5000);
+		 
+
+		 //operating( 45, 45, 45);
+		 
+	}
+
+}

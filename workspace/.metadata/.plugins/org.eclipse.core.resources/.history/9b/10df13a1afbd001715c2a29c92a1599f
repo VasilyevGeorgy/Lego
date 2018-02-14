@@ -1,0 +1,53 @@
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
+public class DHTable {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String[] headers = {
+			     "i",
+			     "alpha(i-1)",
+			     "a(i-1)",
+			     "d(i)",
+			     "theta(i)"
+			}; 
+		
+		String[][] data = {
+				{"1","0","0","55","theta1"},
+				{"2","0","55","0","theta2"},
+				{"3","180","80","d3","0"},
+				{"4","0","0","75","0"},
+		};
+		
+		JTextArea theta1 = new JTextArea("theta1",8,10);
+		JTextField theta2 = new JTextField("theta2");
+		JTextField d3 = new JTextField();
+		
+		JTable DHtable = new JTable(data, headers);
+		DHtable.setFillsViewportHeight(true);
+		JScrollPane scrollPane = new JScrollPane(DHtable);
+		JFrame frame = new JFrame();
+		frame.add(scrollPane);
+		//theta1.setHorizontalAlignment(JTextField.TRAILING);
+		frame.add(theta1);
+		//frame.add(theta2);
+		frame.setSize(new Dimension(100,100));
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.add(DHtable);
+		frame.setLocationRelativeTo(null);
+		frame.pack();
+		frame.setVisible(true);
+		
+		
+		
+		
+	}
+
+}

@@ -1,0 +1,73 @@
+import lejos.hardware.BrickFinder;
+import lejos.hardware.lcd.GraphicsLCD;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.MotorPort;
+import lejos.robotics.RegulatedMotor;
+import lejos.utility.Delay;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JFrame;
+import java.awt.Dimension;
+import java.io.File;
+import static java.lang.System.out;
+import lejos.hardware.Sound;
+
+
+public class EV3 {
+	
+	static RegulatedMotor a = new EV3LargeRegulatedMotor(MotorPort.A);
+	static RegulatedMotor b = new EV3LargeRegulatedMotor(MotorPort.B);
+	static RegulatedMotor c = new EV3MediumRegulatedMotor(MotorPort.C);
+	
+	public static void operating(int m1, int m2, int m3){
+		
+		//RegulatedMotor a = new EV3LargeRegulatedMotor(MotorPort.A);
+		 //a.backward();
+		 a.setSpeed(460); 
+		 //a.rotateTo(90,true);
+		 a.rotate(m1);
+		 a.stop();
+		 
+		 //RegulatedMotor b = new EV3LargeRegulatedMotor(MotorPort.B);
+		 m2 = -m2;
+		 //b.backward();
+		 b.setSpeed(120);
+		 //b.rotateTo(50);
+		 b.rotate(m2);
+		 b.stop();
+		 
+		 //RegulatedMotor c = new EV3MediumRegulatedMotor(MotorPort.C);
+		 m3 = -m3;
+		 //c.backward();
+		 c.setSpeed(1600); 
+		 c.rotate(m3);//110 deg = 25mm, max
+		 c.stop();
+		
+	}
+	
+	 public static void main(String[] args) {	
+		 
+	     final File sound = new File("IronMan.wav");
+	     Sound.playSample(sound, 100);
+	     System.out.println("still running...");
+	     Delay.msDelay(4000);
+		 operating(800,0,2200);// 900,...,3200 - max
+		 operating(-800,0,-2200);
+		 //operating(0,0,-120);
+		 //operating(0,0,-120);
+		 //operating(0,-45,0);
+		 //operating(-45,0,0);
+		 //double[][] dhtable = new double[5][5];
+		 //System.out.println(dhtable);
+	     //GraphicsLCD g  = BrickFinder.getDefault().getGraphicsLCD();     
+	     //g.drawString("", 0, 0, GraphicsLCD.VCENTER | GraphicsLCD.LEFT);
+	     //Delay.msDelay(5000);
+		 
+
+		 //operating( 45, 45, 45);
+		 
+	}
+
+}

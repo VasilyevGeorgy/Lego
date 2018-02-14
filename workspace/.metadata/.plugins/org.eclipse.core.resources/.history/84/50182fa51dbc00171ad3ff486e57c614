@@ -1,0 +1,35 @@
+import lejos.hardware.BrickFinder;
+import lejos.hardware.lcd.GraphicsLCD;
+import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
+import lejos.hardware.motor.Motor;
+import lejos.hardware.port.MotorPort;
+import lejos.robotics.RegulatedMotor;
+import lejos.utility.Delay;
+
+
+public class SCARA_1 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+	 RegulatedMotor a = new EV3LargeRegulatedMotor(MotorPort.A);
+	 Motor.A.setSpeed(100);
+	 a.rotate(-90); // is same with ordinary
+	 RegulatedMotor b = new EV3LargeRegulatedMotor(MotorPort.B);
+	 Motor.B.setSpeed(100);
+	 b.rotate(-40);// -35 is max anticlockwise for if start position is normal, 70 is max clockwise
+	 RegulatedMotor c = new EV3MediumRegulatedMotor(MotorPort.C);
+	 c.rotate(-90);// 90 is max, plus is forward, minus is backward
+	 
+	 //a.close();
+	 //b.close();
+	 // c.close();
+	 
+     GraphicsLCD g  = BrickFinder.getDefault().getGraphicsLCD();     
+     //g.drawString("Hello World!", 0, 0, GraphicsLCD.VCENTER | GraphicsLCD.LEFT);
+     //Delay.msDelay(5000);
+     //g.close();
+		
+	}
+
+}

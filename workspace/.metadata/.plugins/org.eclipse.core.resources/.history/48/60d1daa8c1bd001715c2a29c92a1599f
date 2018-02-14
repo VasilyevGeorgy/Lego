@@ -1,0 +1,55 @@
+import javax.swing.*;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+
+public class DHTable {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String[] headers = {
+			     "i",
+			     "alpha(i-1)",
+			     "a(i-1)",
+			     "d(i)",
+			     "theta(i)"
+			}; 
+		
+		String[][] data = {
+				{"1","0","0","55","theta1"},
+				{"2","0","55","0","theta2"},
+				{"3","180","80","d3","0"},
+				{"4","0","0","75","0"},
+		};
+		
+		JTextField theta1 = new JTextField("theta1");
+		JTextField theta2 = new JTextField("theta2");
+		JTextField d3 = new JTextField("d3");
+		
+		
+		JTable DHtable = new JTable(data, headers);
+		DHtable.setFillsViewportHeight(true);
+		JScrollPane scrollPane = new JScrollPane(DHtable);
+		JFrame frame = new JFrame();
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout());
+
+		panel.add(scrollPane);
+		panel.add(theta1,FlowLayout.RIGHT);
+		panel.add(theta2,FlowLayout.TRAILING);
+		panel.add(d3,FlowLayout.TRAILING);
+		frame.getContentPane().add(panel);
+		frame.setPreferredSize(new Dimension(500, 500));
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLocationRelativeTo(null);
+		frame.pack();
+		frame.setVisible(true);
+		
+		
+		
+		
+	}
+
+}
