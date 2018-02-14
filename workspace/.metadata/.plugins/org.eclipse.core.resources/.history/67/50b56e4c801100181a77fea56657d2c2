@@ -39,31 +39,45 @@ public class EV3 {
 	
 	public static void invKin(double x, double y){ // y = mm
 		
-		x = x + l1;
-		y = y - l2;
-		double d2 = -l1 + Math.sqrt(x*x +y*y -l2*l2);
-		//System.out.println(d2);
-		// перевести d2  градусы для medmotor: 5000 deg = 42 mm
-		double angle = 5000*d2/42;
-		int th3 = (int) angle; // th3 - перевод d2 в углы
+		b.setSpeed(52);
+		c.setSpeed(1600); 
 		
-		angle = 0.0;
-		angle = Math.atan2(y,x)*180;
-		System.out.println(angle);
-		double alpha = Math.atan2(l2,l1+d2)*180;
-		System.out.println(alpha);
-		int th2 = (int) (angle + alpha);
-		System.out.println(th2);
+		double d2Prev = 0;
+		int th2Prev = 0;
 		
-		 b.setSpeed(52);
-		 //b.rotate(th2);
-		 b.stop();
+		for (int i=0; i==3; i++){
+			
+			x = x + l1;
+			y = y - l2;
+			double d2 = -l1 + Math.sqrt(x*x +y*y -l2*l2) - d2Prev ;
+			//System.out.println(d2);
+			// перевести d2  градусы для medmotor: 5000 deg = 42 mm
+			double angle = 5000*d2/42;
+			int th3 = (int) angle; // th3 - перевод d2 в градусы
+			d2Prev = d2Prev + d2;
+			
+			angle = 0.0;
+			angle = Math.atan2(y,x)*180/Math.PI;
+			//System.out.println(angle);
+			double alpha = Math.atan2(l2,l1+d2)*180/Math.PI;
+			//System.out.println(alpha);
+			int th2 = (int) (angle + alpha) - th2Prev;
+			//System.out.println(th2);
+			th2Prev += th2;
+			 
+			 b.rotate(th2);
+			 b.stop();
+			 
+			 c.setSpeed(1600); 
+			 c.rotate(-th3);
+			 //System.out.println(th3);
+			 c.stop();
+		}
+
 		 
-		 c.setSpeed(1600); 
-		 //c.rotate(-th3);
-		 //System.out.println(th3);
-		 c.stop();
-		
+		 //return new Pair<Integer>(th2, th3);
+		 //return new int[] {th2, th3};
+		 
 	}
 	
 	
@@ -211,41 +225,32 @@ public class EV3 {
 	
 	 public static void main(String[] args) {	
 		 
-
+		 //forKin(0,0,-5000);
+		 
+		 
+		 
+		 
+		 /*int[] prevParam = invKin(0.0,box[1],0,0);
+		 Delay.msDelay(1000);
+		 
+		 prevParam[0] = invKin(0.0,box[2],prevParam[0],prevParam[1])[0]; // ПЕРЕДЕЛАТЬ В НОРМАЛЬНЫЙ ЦИКЛ 
+		 Delay.msDelay(1000);											 // В САМОМ МЕТОДЕ
+		 
+		 prevParam = invKin(0.0,box[3],prevParam[0],prevParam[1]);
+		 Delay.msDelay(1000);*/
+		 
+		 //invKin(0.0,box[0]);
 	     
-		 //forKin(0,0,-1500);// 900,...,5000 - max
-		 //forKin(360,0,0);
-		 //forKin(0,0,-2000);
-		 
-		 //GraphicsLCD g  = BrickFinder.getDefault().getGraphicsLCD(); 
-		 invKin(0.0,53);
-	     /*//g.drawString("First box", 0, 0, GraphicsLCD.VCENTER | GraphicsLCD.HCENTER);
-	     Delay.msDelay(1000);
-		 invKin(0.01,box[1]);
-		 //g.drawString("Second box", 0, 0, GraphicsLCD.VCENTER | GraphicsLCD.HCENTER);
-	     Delay.msDelay(1000);
-	     LCD.refresh();
-	     LCD.clear();
-		 invKin(0.01,box[2]);
-		 //g.drawString("Third box", 0, 0, GraphicsLCD.VCENTER | GraphicsLCD.HCENTER);
-	     Delay.msDelay(1000);
-		 invKin(0.01,box[3]);
-		 //g.drawString("Fourth box", 0, 0, GraphicsLCD.VCENTER | GraphicsLCD.HCENTER);
-	     Delay.msDelay(1000);*/
-		 
 		 //colorCheck();  
 		 
 		 //playSound();
 		 
 		 //playMelody();
 		 
-	     //GraphicsLCD g  = BrickFinder.getDefault().getGraphicsLCD();     
-	     //g.drawString("", 0, 0, GraphicsLCD.VCENTER | GraphicsLCD.LEFT);
-	     //Delay.msDelay(5000);
-		 
 
-		 //operating( 45, 45, 45);
 		 
 	}
 
+
 }
+

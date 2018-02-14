@@ -37,35 +37,48 @@ public class EV3 {
 	static double jump = 89;//mm  расстояние от середины до середины междурядья
 	
 	
-	public static int[] invKin(double x, double y, int th2Prev, int th3Prev){ // y = mm
+	public static void invKin(){ // y = mm
 		
-		x = x + l1;
-		y = y - l2;
-		double d2 = -l1 + Math.sqrt(x*x +y*y -l2*l2) - th3Prev*42/5000;
-		System.out.println(d2);
-		// перевести d2  градусы для medmotor: 5000 deg = 42 mm
-		double angle = 5000*d2/42;
-		int th3 = (int) angle; // th3 - перевод d2 в градусы
+		b.setSpeed(52);
+		c.setSpeed(1600); 
 		
-		angle = 0.0;
-		angle = Math.atan2(y,x)*180/Math.PI;
-		System.out.println(angle);
-		double alpha = Math.atan2(l2,l1+d2)*180/Math.PI;
-		System.out.println(alpha);
-		int th2 = (int) (angle + alpha) - th2Prev;
-		System.out.println(th2);
+		double d2Prev = 0;
+		int th2Prev = 0;
 		
-		 b.setSpeed(52);
-		 b.rotate(th2);
-		 b.stop();
-		 
-		 c.setSpeed(1600); 
-		 c.rotate(-th3);
-		 //System.out.println(th3);
-		 c.stop();
+		for (int i=0; i==3; i++){
+			
+			double x = 0;
+			double y = 0;
+			x = x + l1;
+			y = box[i] - l2;
+			double d2 = -l1 + Math.sqrt(x*x +y*y -l2*l2) - d2Prev ;
+			//System.out.println(d2);
+			// перевести d2  градусы для medmotor: 5000 deg = 42 mm
+			double angle = 5000*d2/42;
+			int th3 = (int) angle; // th3 - перевод d2 в градусы
+			d2Prev = d2Prev + d2;
+			
+			angle = 0.0;
+			angle = Math.atan2(y,x)*180/Math.PI;
+			//System.out.println(angle);
+			double alpha = Math.atan2(l2,l1+d2)*180/Math.PI;
+			//System.out.println(alpha);
+			int th2 = (int) (angle + alpha) - th2Prev;
+			//System.out.println(th2);
+			th2Prev += th2;
+			 
+			 b.rotate(th2);
+			 b.stop();
+			 
+			 c.setSpeed(1600); 
+			 c.rotate(-th3);
+			 //System.out.println(th3);
+			 c.stop();
+		}
+
 		 
 		 //return new Pair<Integer>(th2, th3);
-		 return new int[] {th2, th3};
+		 //return new int[] {th2, th3};
 		 
 	}
 	
@@ -216,18 +229,20 @@ public class EV3 {
 		 
 		 //forKin(0,0,-5000);
 		 
-		 int[] prevParam = invKin(0.0,box[1],0,0);
+		 
+		 
+		 
+		 /*int[] prevParam = invKin(0.0,box[1],0,0);
 		 Delay.msDelay(1000);
 		 
 		 prevParam[0] = invKin(0.0,box[2],prevParam[0],prevParam[1])[0]; // ПЕРЕДЕЛАТЬ В НОРМАЛЬНЫЙ ЦИКЛ 
 		 Delay.msDelay(1000);											 // В САМОМ МЕТОДЕ
 		 
 		 prevParam = invKin(0.0,box[3],prevParam[0],prevParam[1]);
-		 Delay.msDelay(1000);
+		 Delay.msDelay(1000);*/
 		 
 		 //invKin(0.0,box[0]);
 	     
-		 
 		 //colorCheck();  
 		 
 		 //playSound();
